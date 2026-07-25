@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tap Kotak</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: white;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    #info {
+      display: flex;
+      gap: 20px;
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    #gameArea {
+      position: relative;
+      width: 90vw;
+      max-width: 420px;
+      height: 60vh;
+      max-height: 500px;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    #target {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      background: #ff4757;
+      border-radius: 16px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    button {
+      margin: 16px 0;
+      padding: 12px 22px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      background: white;
+      color: #0077b6;
+      font-weight: bold;
+    }
+
+    #message {
+      font-size: 18px;
+      min-height: 24px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tap Kotak!</h1>
+
+  <div id="info">
+    <div>Skor: <span id="score">0</span></div>
+    <div>Waktu: <span id="time">30</span></div>
+  </div>
+
+  <button id="startBtn">Mulai Game</button>
+
+  <div id="gameArea">
+    <div id="target">TAP</div>
+  </div>
+
+  <p id="message">Tekan tombol "Mulai Game"</p>
+
+  <script>
+    const scoreEl = document.getElementById('score');
+    const timeEl = document.getElementById('time');
+    const startBtn = document.getElementById('startBtn');
+    const target = document.getElementById('target');
+    const gameArea = document.getElementById('gameArea');
+    const messageEl = document.getElementById('message');
+
+    let score = 0;
+    let timeLeft = 30;
+    let timer = null;
+    let playing = false;
+
+    function moveTarget() {
+      const areaWidth = gameArea.clientWidth;
+      const areaHeight = gameArea.clientHeight;
+      const targetSize = target.clientWidth;
+
+      const maxX = areaWidth - targetSize;
+      const maxY = areaHeight - targetSize;
+
+      const x = Math.floor(Math.random() * maxX);
+      const y = Math.floor(Math.random() * maxY);
+
+      target.style.left = x + 'px';
+      target.style.top = y + 'px';
+    }
+
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      playing = true;
+
+      scoreEl.textContent = score;
+      timeEl.textContent = timeLeft;
+      messageEl.textContent = 'Cepat tap kotaknya!';
+      target.style.display = 'flex';
+      moveTarget();
+      startBtn.textContent = 'Main Lagi';
+
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        timeEl.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      playing = false;
+      clearInterval(timer);
+      target.style.display = 'none';
+      messageEl.textContent = 'Game selesai! Skor kamu: ' + score;
+    }
+
+    target.addEventListener('pointerdown', () => {
+      if (!playing) return;
+      score++;
+      scoreEl.textContent = score;
+      moveTarget();
+    });
+
+    startBtn.addEventListener('click', startGame);
+  </script>
+</body>
+</html>
